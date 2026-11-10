@@ -1,6 +1,6 @@
 # Pattern Recognition
 
-Course project repository for Pattern Recognition, developed in collaboration with **Nykandr Marhal**.
+Course project repository for Pattern Recognition.
 
 ## Project documents
 
