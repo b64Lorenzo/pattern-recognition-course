@@ -1,0 +1,1892 @@
+<?xml version='1.0' encoding='utf-8'?>
+<pipelineConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="pipeline.xsd" version="1">
+  <logging>
+    <directory>logs</directory>
+    <level>INFO</level>
+  </logging>
+  <preprocessing>
+    <run>true</run>
+    <inputs>
+      <path>data/patients</path>
+    </inputs>
+    <outputDirectory>results</outputDirectory>
+    <relevantParameters formatVersion="1">
+      <settings>
+        <entry name="source_workbook">
+          <string>organIQ_relevant_parameters.xlsx (not bundled)</string>
+        </entry>
+        <entry name="source_sheet">
+          <string>Relevant parameters</string>
+        </entry>
+        <entry name="included_phases">
+          <array>
+            <item>
+              <string>Pre-operative</string>
+            </item>
+            <item>
+              <string>During-operative</string>
+            </item>
+            <item>
+              <string>Post-operative</string>
+            </item>
+          </array>
+        </entry>
+        <entry name="excluded_phases">
+          <array />
+        </entry>
+        <entry name="missing_value_tokens">
+          <array>
+            <item>
+              <string />
+            </item>
+            <item>
+              <string>na</string>
+            </item>
+            <item>
+              <string>n/a</string>
+            </item>
+            <item>
+              <string>nan</string>
+            </item>
+            <item>
+              <string>null</string>
+            </item>
+          </array>
+        </entry>
+        <entry name="derived_features">
+          <object>
+            <entry name="bmi">
+              <object>
+                <entry name="enabled">
+                  <boolean>true</boolean>
+                </entry>
+                <entry name="weight_parameter_id">
+                  <string>weight</string>
+                </entry>
+                <entry name="height_parameter_id">
+                  <string>height</string>
+                </entry>
+                <entry name="weight_unit">
+                  <string>kg</string>
+                </entry>
+                <entry name="height_unit">
+                  <string>cm</string>
+                </entry>
+                <entry name="unit_assumption_note">
+                  <string>The source workbook asks for BMI derivation but does not specify units. Defaults assume kilograms and centimeters; verify against the cohort data dictionary before using derived BMI for research.</string>
+                </entry>
+              </object>
+            </entry>
+          </object>
+        </entry>
+        <entry name="preoperative_start_event_patterns">
+          <array>
+            <item>
+              <string>start anesthesie</string>
+            </item>
+            <item>
+              <string>start anesthesia</string>
+            </item>
+            <item>
+              <string>start anaesthesia</string>
+            </item>
+            <item>
+              <string>start surgery</string>
+            </item>
+            <item>
+              <string>incision</string>
+            </item>
+          </array>
+        </entry>
+        <entry name="patient_outcome_rules">
+          <object>
+            <entry name="direct_outcome_columns">
+              <array>
+                <item>
+                  <string>operation result</string>
+                </item>
+                <item>
+                  <string>operation_result</string>
+                </item>
+                <item>
+                  <string>operative outcome</string>
+                </item>
+              </array>
+            </entry>
+            <entry name="creatinine_field">
+              <string>epic.LAB.Kreatinine (umol/L)</string>
+            </entry>
+            <entry name="postoperative_window_hours">
+              <number>72</number>
+            </entry>
+            <entry name="clinical_reference">
+              <string>KDIGO 2012 Clinical Practice Guideline for Acute Kidney Injury, section 2.1 / Table 2; doi:10.1038/kisup.2012.7</string>
+            </entry>
+            <entry name="rule_note">
+              <string>Binary targets: -1 failure and +1 success. Any matching failure criterion takes precedence over success. Missing evidence and parameters without defined criteria remain unclassified.</string>
+            </entry>
+            <entry name="baseline_creatinine_parameter_id">
+              <string>baseline_creatinine</string>
+            </entry>
+            <entry name="categorical_rules">
+              <array>
+                <item>
+                  <object>
+                    <entry name="classification">
+                      <string>success</string>
+                    </entry>
+                    <entry name="values">
+                      <array>
+                        <item>
+                          <string>optimal</string>
+                        </item>
+                        <item>
+                          <string>optimal condition</string>
+                        </item>
+                      </array>
+                    </entry>
+                  </object>
+                </item>
+                <item>
+                  <object>
+                    <entry name="classification">
+                      <string>success</string>
+                    </entry>
+                    <entry name="values">
+                      <array>
+                        <item>
+                          <string>mid</string>
+                        </item>
+                        <item>
+                          <string>mid condition</string>
+                        </item>
+                      </array>
+                    </entry>
+                  </object>
+                </item>
+                <item>
+                  <object>
+                    <entry name="classification">
+                      <string>failure</string>
+                    </entry>
+                    <entry name="values">
+                      <array>
+                        <item>
+                          <string>severe</string>
+                        </item>
+                        <item>
+                          <string>severe problems</string>
+                        </item>
+                        <item>
+                          <string>sever problems</string>
+                        </item>
+                        <item>
+                          <string>severe complication</string>
+                        </item>
+                        <item>
+                          <string>severe complications</string>
+                        </item>
+                        <item>
+                          <string>death</string>
+                        </item>
+                        <item>
+                          <string>dead</string>
+                        </item>
+                        <item>
+                          <string>deceased</string>
+                        </item>
+                        <item>
+                          <string>died</string>
+                        </item>
+                      </array>
+                    </entry>
+                  </object>
+                </item>
+              </array>
+            </entry>
+          </object>
+        </entry>
+        <entry name="parameter_names_nl">
+          <object>
+            <entry name="age">
+              <string>Leeftijd</string>
+            </entry>
+            <entry name="sex">
+              <string>Geslacht</string>
+            </entry>
+            <entry name="weight">
+              <string>Gewicht</string>
+            </entry>
+            <entry name="height">
+              <string>Lengte</string>
+            </entry>
+            <entry name="bmi">
+              <string>BMI</string>
+            </entry>
+            <entry name="asa">
+              <string>ASA-classificatie</string>
+            </entry>
+            <entry name="operation_diagnosis_proxy">
+              <string>Operatie-/diagnoseproxy</string>
+            </entry>
+            <entry name="baseline_creatinine">
+              <string>Creatinine vóór operatie</string>
+            </entry>
+            <entry name="baseline_hemoglobin">
+              <string>Hemoglobine vóór operatie</string>
+            </entry>
+            <entry name="postop_creatinine_72h">
+              <string>Creatinine eerste 72 uur</string>
+            </entry>
+            <entry name="postop_urine_72h">
+              <string>Urineproductie eerste 72 uur</string>
+            </entry>
+            <entry name="aki_kdigo_stage">
+              <string>AKI-/KDIGO-stadium</string>
+            </entry>
+            <entry name="ventilation_duration">
+              <string>Duur mechanische beademing</string>
+            </entry>
+            <entry name="icu_los">
+              <string>Verblijfsduur op de IC</string>
+            </entry>
+            <entry name="hospital_los">
+              <string>Ziekenhuisverblijfsduur</string>
+            </entry>
+            <entry name="mortality_30d">
+              <string>Overlijdensindicator 30 dagen (niet bevestigd)</string>
+            </entry>
+            <entry name="recorded_death_days">
+              <string>Geregistreerde dagen tot overlijden (termijn onbekend)</string>
+            </entry>
+            <entry name="postop_ecmo">
+              <string>ECMO na de operatie</string>
+            </entry>
+            <entry name="prism_ii">
+              <string>PRISM II</string>
+            </entry>
+            <entry name="pim">
+              <string>PIM</string>
+            </entry>
+          </object>
+        </entry>
+        <entry name="catalog_phases">
+          <array>
+            <item>
+              <string>Pre-operative</string>
+            </item>
+            <item>
+              <string>During-operative</string>
+            </item>
+            <item>
+              <string>Post-operative</string>
+            </item>
+          </array>
+        </entry>
+        <entry name="catalog_field_definitions">
+          <object>
+            <entry name="exact_field_names">
+              <string>Exact field identifiers parsed from the workbook field cell; workbook_exact_field_entry preserves the entire original cell, including unresolved TBD or derived text.</string>
+            </entry>
+            <entry name="unit">
+              <string>Workbook-stated or directly encoded source unit; null means unspecified or not applicable, not an inferred unit.</string>
+            </entry>
+            <entry name="value_range">
+              <string>The `value_range` field records known data/scale bounds only; it does not define outcome criteria. Outcome criteria are configured per post-operative parameter in `outcome_criteria`.</string>
+            </entry>
+          </object>
+        </entry>
+        <entry name="creatinine_staging_rules">
+          <object>
+            <entry name="baseline_lookback_hours">
+              <number>168</number>
+            </entry>
+            <entry name="ratio_stages">
+              <array>
+                <item>
+                  <object>
+                    <entry name="stage">
+                      <number>3</number>
+                    </entry>
+                    <entry name="minimum_ratio">
+                      <number>3.0</number>
+                    </entry>
+                  </object>
+                </item>
+                <item>
+                  <object>
+                    <entry name="stage">
+                      <number>2</number>
+                    </entry>
+                    <entry name="minimum_ratio">
+                      <number>2.0</number>
+                    </entry>
+                  </object>
+                </item>
+                <item>
+                  <object>
+                    <entry name="stage">
+                      <number>1</number>
+                    </entry>
+                    <entry name="minimum_ratio">
+                      <number>1.5</number>
+                    </entry>
+                  </object>
+                </item>
+              </array>
+            </entry>
+            <entry name="absolute_criteria">
+              <array>
+                <item>
+                  <object>
+                    <entry name="stage">
+                      <number>3</number>
+                    </entry>
+                    <entry name="minimum_value">
+                      <number>353.6</number>
+                    </entry>
+                    <entry name="requires_increase_from_baseline">
+                      <boolean>true</boolean>
+                    </entry>
+                  </object>
+                </item>
+              </array>
+            </entry>
+            <entry name="acute_increase">
+              <object>
+                <entry name="stage">
+                  <number>1</number>
+                </entry>
+                <entry name="minimum_increase">
+                  <number>26.5</number>
+                </entry>
+                <entry name="within_hours">
+                  <number>48</number>
+                </entry>
+              </object>
+            </entry>
+            <entry name="pairwise_increase">
+              <object>
+                <entry name="stage">
+                  <number>1</number>
+                </entry>
+                <entry name="minimum_increase">
+                  <number>26.5</number>
+                </entry>
+                <entry name="within_hours">
+                  <number>48</number>
+                </entry>
+              </object>
+            </entry>
+            <entry name="default_stage">
+              <number>0</number>
+            </entry>
+          </object>
+        </entry>
+      </settings>
+      <pre>
+        <class name="epic.DEMOGRAPHICS">
+          <parameter id="age">
+            <entry name="name">
+              <string>Age</string>
+            </entry>
+            <entry name="role">
+              <string>Predictor</string>
+            </entry>
+            <entry name="priority">
+              <string>Core</string>
+            </entry>
+            <entry name="source_fields">
+              <array>
+                <item>
+                  <string>epic.DEMOGRAPHICS.age</string>
+                </item>
+              </array>
+            </entry>
+            <entry name="notes">
+              <string>Value at surgery.</string>
+            </entry>
+            <entry name="clinical_parameter">
+              <string>Age</string>
+            </entry>
+            <entry name="exact_field_names">
+              <array>
+                <item>
+                  <string>epic.DEMOGRAPHICS.age</string>
+                </item>
+              </array>
+            </entry>
+            <entry name="extraction_definition">
+              <string>Value at surgery</string>
+            </entry>
+            <entry name="parameter_type">
+              <string>numeric</string>
+            </entry>
+            <entry name="unit">
+              <null />
+            </entry>
+            <entry name="value_range">
+              <null />
+            </entry>
+            <entry name="source_status">
+              <string>mapped; verify availability and units in full cohort</string>
+            </entry>
+            <entry name="workbook_row">
+              <number>6</number>
+            </entry>
+            <entry name="workbook_exact_field_entry">
+              <string>epic.DEMOGRAPHICS.age</string>
+            </entry>
+            <entry name="allow_static_cutoff_fallback">
+              <boolean>true</boolean>
+            </entry>
+          </parameter>
+          <parameter id="sex">
+            <entry name="name">
+              <string>Sex</string>
+            </entry>
+            <entry name="role">
+              <string>Predictor</string>
+            </entry>
+            <entry name="priority">
+              <string>Core</string>
+            </entry>
+            <entry name="source_fields">
+              <array>
+                <item>
+                  <string>epic.DEMOGRAPHICS.sex</string>
+                </item>
+              </array>
+            </entry>
+            <entry name="notes">
+              <string>As recorded.</string>
+            </entry>
+            <entry name="clinical_parameter">
+              <string>Sex</string>
+            </entry>
+            <entry name="exact_field_names">
+              <array>
+                <item>
+                  <string>epic.DEMOGRAPHICS.sex</string>
+                </item>
+              </array>
+            </entry>
+            <entry name="extraction_definition">
+              <string>As recorded</string>
+            </entry>
+            <entry name="parameter_type">
+              <string>categorical</string>
+            </entry>
+            <entry name="unit">
+              <null />
+            </entry>
+            <entry name="value_range">
+              <null />
+            </entry>
+            <entry name="source_status">
+              <string>mapped; verify availability and units in full cohort</string>
+            </entry>
+            <entry name="workbook_row">
+              <number>7</number>
+            </entry>
+            <entry name="workbook_exact_field_entry">
+              <string>epic.DEMOGRAPHICS.sex</string>
+            </entry>
+            <entry name="allow_static_cutoff_fallback">
+              <boolean>true</boolean>
+            </entry>
+          </parameter>
+          <parameter id="weight">
+            <entry name="name">
+              <string>Weight</string>
+            </entry>
+            <entry name="role">
+              <string>Predictor</string>
+            </entry>
+            <entry name="priority">
+              <string>Core</string>
+            </entry>
+            <entry name="source_fields">
+              <array>
+                <item>
+                  <string>epic.DEMOGRAPHICS.gewicht</string>
+                </item>
+              </array>
+            </entry>
+            <entry name="notes">
+              <string>Last/pre-operative value; verify units.</string>
+            </entry>
+            <entry name="clinical_parameter">
+              <string>Weight</string>
+            </entry>
+            <entry name="exact_field_names">
+              <array>
+                <item>
+                  <string>epic.DEMOGRAPHICS.gewicht</string>
+                </item>
+              </array>
+            </entry>
+            <entry name="extraction_definition">
+              <string>Last/pre-op value</string>
+            </entry>
+            <entry name="parameter_type">
+              <string>numeric</string>
+            </entry>
+            <entry name="unit">
+              <null />
+            </entry>
+            <entry name="value_range">
+              <null />
+            </entry>
+            <entry name="source_status">
+              <string>mapped; verify availability and units in full cohort</string>
+            </entry>
+            <entry name="workbook_row">
+              <number>8</number>
+            </entry>
+            <entry name="workbook_exact_field_entry">
+              <string>epic.DEMOGRAPHICS.gewicht</string>
+            </entry>
+            <entry name="allow_static_cutoff_fallback">
+              <boolean>true</boolean>
+            </entry>
+          </parameter>
+          <parameter id="height">
+            <entry name="name">
+              <string>Height</string>
+            </entry>
+            <entry name="role">
+              <string>Predictor</string>
+            </entry>
+            <entry name="priority">
+              <string>Core</string>
+            </entry>
+            <entry name="source_fields">
+              <array>
+                <item>
+                  <string>epic.DEMOGRAPHICS.lengte</string>
+                </item>
+              </array>
+            </entry>
+            <entry name="notes">
+              <string>Last/pre-operative value; verify units.</string>
+            </entry>
+            <entry name="clinical_parameter">
+              <string>Height</string>
+            </entry>
+            <entry name="exact_field_names">
+              <array>
+                <item>
+                  <string>epic.DEMOGRAPHICS.lengte</string>
+                </item>
+              </array>
+            </entry>
+            <entry name="extraction_definition">
+              <string>Last/pre-op value</string>
+            </entry>
+            <entry name="parameter_type">
+              <string>numeric</string>
+            </entry>
+            <entry name="unit">
+              <null />
+            </entry>
+            <entry name="value_range">
+              <null />
+            </entry>
+            <entry name="source_status">
+              <string>mapped; verify availability and units in full cohort</string>
+            </entry>
+            <entry name="workbook_row">
+              <number>9</number>
+            </entry>
+            <entry name="workbook_exact_field_entry">
+              <string>epic.DEMOGRAPHICS.lengte</string>
+            </entry>
+            <entry name="allow_static_cutoff_fallback">
+              <boolean>true</boolean>
+            </entry>
+          </parameter>
+          <parameter id="bmi">
+            <entry name="name">
+              <string>BMI</string>
+            </entry>
+            <entry name="role">
+              <string>Predictor</string>
+            </entry>
+            <entry name="priority">
+              <string>Core</string>
+            </entry>
+            <entry name="source_fields">
+              <array>
+                <item>
+                  <string>epic.DEMOGRAPHICS.BMI</string>
+                </item>
+              </array>
+            </entry>
+            <entry name="notes">
+              <string>Use recorded pre-operative value or derive only after weight/height units are verified.</string>
+            </entry>
+            <entry name="clinical_parameter">
+              <string>BMI</string>
+            </entry>
+            <entry name="exact_field_names">
+              <array>
+                <item>
+                  <string>epic.DEMOGRAPHICS.BMI</string>
+                </item>
+              </array>
+            </entry>
+            <entry name="extraction_definition">
+              <string>Pre-op value or derive from weight/height</string>
+            </entry>
+            <entry name="parameter_type">
+              <string>numeric</string>
+            </entry>
+            <entry name="unit">
+              <null />
+            </entry>
+            <entry name="value_range">
+              <null />
+            </entry>
+            <entry name="source_status">
+              <string>mapped; verify availability and units in full cohort</string>
+            </entry>
+            <entry name="workbook_row">
+              <number>10</number>
+            </entry>
+            <entry name="workbook_exact_field_entry">
+              <string>epic.DEMOGRAPHICS.BMI</string>
+            </entry>
+            <entry name="allow_static_cutoff_fallback">
+              <boolean>true</boolean>
+            </entry>
+          </parameter>
+          <parameter id="asa">
+            <entry name="name">
+              <string>ASA physical status</string>
+            </entry>
+            <entry name="role">
+              <string>Predictor</string>
+            </entry>
+            <entry name="priority">
+              <string>Extended</string>
+            </entry>
+            <entry name="source_fields">
+              <array>
+                <item>
+                  <string>epic.DEMOGRAPHICS.ASA</string>
+                </item>
+              </array>
+            </entry>
+            <entry name="notes">
+              <string>Pre-operative status.</string>
+            </entry>
+            <entry name="clinical_parameter">
+              <string>ASA physical status</string>
+            </entry>
+            <entry name="exact_field_names">
+              <array>
+                <item>
+                  <string>epic.DEMOGRAPHICS.ASA</string>
+                </item>
+              </array>
+            </entry>
+            <entry name="extraction_definition">
+              <string>Pre-op status</string>
+            </entry>
+            <entry name="parameter_type">
+              <string>ordinal</string>
+            </entry>
+            <entry name="unit">
+              <null />
+            </entry>
+            <entry name="value_range">
+              <null />
+            </entry>
+            <entry name="source_status">
+              <string>mapped; verify availability and units in full cohort</string>
+            </entry>
+            <entry name="workbook_row">
+              <number>11</number>
+            </entry>
+            <entry name="workbook_exact_field_entry">
+              <string>epic.DEMOGRAPHICS.ASA</string>
+            </entry>
+            <entry name="allow_static_cutoff_fallback">
+              <boolean>true</boolean>
+            </entry>
+          </parameter>
+        </class>
+        <parameter id="operation_diagnosis_proxy">
+          <entry name="name">
+            <string>Operation / diagnosis proxy</string>
+          </entry>
+          <entry name="role">
+            <string>Predictor / case descriptor</string>
+          </entry>
+          <entry name="priority">
+            <string>Core</string>
+          </entry>
+          <entry name="source_fields">
+            <array>
+              <item>
+                <string>epic.INGREEP.AN_PROC_NAME</string>
+              </item>
+            </array>
+          </entry>
+          <entry name="notes">
+            <string>This is the workbook's operation/diagnosis proxy; categorise only with a reviewed mapping.</string>
+          </entry>
+          <entry name="clinical_parameter">
+            <string>Operation / diagnosis proxy</string>
+          </entry>
+          <entry name="exact_field_names">
+            <array>
+              <item>
+                <string>epic.INGREEP.AN_PROC_NAME</string>
+              </item>
+            </array>
+          </entry>
+          <entry name="extraction_definition">
+            <string>Categorise procedure; later map to diagnosis/complexity if available</string>
+          </entry>
+          <entry name="parameter_type">
+            <string>categorical</string>
+          </entry>
+          <entry name="unit">
+            <null />
+          </entry>
+          <entry name="value_range">
+            <null />
+          </entry>
+          <entry name="source_status">
+            <string>mapped; verify availability and units in full cohort</string>
+          </entry>
+          <entry name="workbook_row">
+            <number>12</number>
+          </entry>
+          <entry name="workbook_exact_field_entry">
+            <string>epic.INGREEP.AN_PROC_NAME</string>
+          </entry>
+          <entry name="allow_static_cutoff_fallback">
+            <boolean>true</boolean>
+          </entry>
+        </parameter>
+        <class name="epic.LAB">
+          <parameter id="baseline_creatinine">
+            <entry name="name">
+              <string>Baseline creatinine</string>
+            </entry>
+            <entry name="role">
+              <string>Predictor + AKI baseline</string>
+            </entry>
+            <entry name="priority">
+              <string>Core</string>
+            </entry>
+            <entry name="source_fields">
+              <array>
+                <item>
+                  <string>epic.LAB.Kreatinine (umol/L)</string>
+                </item>
+              </array>
+            </entry>
+            <entry name="notes">
+              <string>Select the last valid value before the configured surgery-event cutoff.</string>
+            </entry>
+            <entry name="clinical_parameter">
+              <string>Baseline creatinine</string>
+            </entry>
+            <entry name="exact_field_names">
+              <array>
+                <item>
+                  <string>epic.LAB.Kreatinine (umol/L)</string>
+                </item>
+              </array>
+            </entry>
+            <entry name="extraction_definition">
+              <string>Last valid value before surgery</string>
+            </entry>
+            <entry name="parameter_type">
+              <string>numeric</string>
+            </entry>
+            <entry name="unit">
+              <string>umol/L</string>
+            </entry>
+            <entry name="value_range">
+              <null />
+            </entry>
+            <entry name="source_status">
+              <string>mapped; verify availability and units in full cohort</string>
+            </entry>
+            <entry name="workbook_row">
+              <number>13</number>
+            </entry>
+            <entry name="workbook_exact_field_entry">
+              <string>epic.LAB.Kreatinine (umol/L)</string>
+            </entry>
+            <entry name="allow_static_cutoff_fallback">
+              <boolean>false</boolean>
+            </entry>
+          </parameter>
+          <parameter id="baseline_hemoglobin">
+            <entry name="name">
+              <string>Baseline haemoglobin</string>
+            </entry>
+            <entry name="role">
+              <string>Predictor</string>
+            </entry>
+            <entry name="priority">
+              <string>Core</string>
+            </entry>
+            <entry name="source_fields">
+              <array>
+                <item>
+                  <string>epic.LAB.Hb (mmol/L)</string>
+                </item>
+                <item>
+                  <string>epic.LAB.poc Hb -ABL (mmol/L)</string>
+                </item>
+              </array>
+            </entry>
+            <entry name="notes">
+              <string>Use the latest mapped pre-operative value across available source alternatives.</string>
+            </entry>
+            <entry name="clinical_parameter">
+              <string>Baseline haemoglobin</string>
+            </entry>
+            <entry name="exact_field_names">
+              <array>
+                <item>
+                  <string>epic.LAB.Hb (mmol/L)</string>
+                </item>
+                <item>
+                  <string>epic.LAB.poc Hb -ABL (mmol/L)</string>
+                </item>
+              </array>
+            </entry>
+            <entry name="extraction_definition">
+              <string>Last valid pre-op value</string>
+            </entry>
+            <entry name="parameter_type">
+              <string>numeric</string>
+            </entry>
+            <entry name="unit">
+              <string>mmol/L</string>
+            </entry>
+            <entry name="value_range">
+              <null />
+            </entry>
+            <entry name="source_status">
+              <string>mapped; verify availability and units in full cohort</string>
+            </entry>
+            <entry name="workbook_row">
+              <number>14</number>
+            </entry>
+            <entry name="workbook_exact_field_entry">
+              <string>epic.LAB.Hb (mmol/L); epic.LAB.poc Hb -ABL (mmol/L)</string>
+            </entry>
+            <entry name="allow_static_cutoff_fallback">
+              <boolean>false</boolean>
+            </entry>
+          </parameter>
+        </class>
+      </pre>
+      <during />
+      <post>
+        <parameter id="aki_kdigo_stage" measurementOrder="3">
+          <entry name="name">
+            <string>AKI / KDIGO stage within 72 h</string>
+          </entry>
+          <entry name="role">
+            <string>PRIMARY TARGET</string>
+          </entry>
+          <entry name="priority">
+            <string>Core</string>
+          </entry>
+          <entry name="source_fields">
+            <array />
+          </entry>
+          <entry name="notes">
+            <string>Creatinine-based screen only; urine output, dialysis, and pediatric eGFR criteria are not inferred.</string>
+          </entry>
+          <entry name="clinical_parameter">
+            <string>AKI / KDIGO stage ≤72 h</string>
+          </entry>
+          <entry name="exact_field_names">
+            <array />
+          </entry>
+          <entry name="extraction_definition">
+            <string>Binary AKI yes/no first; retain stage 0–3</string>
+          </entry>
+          <entry name="parameter_type">
+            <string>ordinal</string>
+          </entry>
+          <entry name="unit">
+            <string>stage</string>
+          </entry>
+          <entry name="value_range">
+            <object>
+              <entry name="min">
+                <number>0</number>
+              </entry>
+              <entry name="max">
+                <number>3</number>
+              </entry>
+            </object>
+          </entry>
+          <entry name="source_status">
+            <string>unresolved or derived; see extraction definition</string>
+          </entry>
+          <entry name="workbook_row">
+            <number>35</number>
+          </entry>
+          <entry name="workbook_exact_field_entry">
+            <string>Derived from pre-op + postoperative creatinine and urine output</string>
+          </entry>
+          <entry name="measurement">
+            <object>
+              <entry name="derived_from">
+                <string>creatinine_stage</string>
+              </entry>
+              <entry name="aggregation">
+                <string>last</string>
+              </entry>
+              <entry name="units">
+                <string>stage</string>
+              </entry>
+            </object>
+          </entry>
+          <entry name="outcome_criteria">
+            <object>
+              <entry name="success">
+                <object>
+                  <entry name="operator">
+                    <string>in</string>
+                  </entry>
+                  <entry name="values">
+                    <array>
+                      <item>
+                        <number>0</number>
+                      </item>
+                      <item>
+                        <number>1</number>
+                      </item>
+                    </array>
+                  </entry>
+                </object>
+              </entry>
+              <entry name="failure">
+                <object>
+                  <entry name="operator">
+                    <string>in</string>
+                  </entry>
+                  <entry name="values">
+                    <array>
+                      <item>
+                        <number>2</number>
+                      </item>
+                      <item>
+                        <number>3</number>
+                      </item>
+                    </array>
+                  </entry>
+                </object>
+              </entry>
+              <entry name="status">
+                <string>provisional</string>
+              </entry>
+            </object>
+          </entry>
+        </parameter>
+        <parameter id="hospital_los" measurementOrder="6">
+          <entry name="name">
+            <string>Hospital length of stay</string>
+          </entry>
+          <entry name="role">
+            <string>SECONDARY TARGET</string>
+          </entry>
+          <entry name="priority">
+            <string>Core</string>
+          </entry>
+          <entry name="source_fields">
+            <array />
+          </entry>
+          <entry name="notes">
+            <string>The workbook reports no field in the current postoperative ICU dataset.</string>
+          </entry>
+          <entry name="clinical_parameter">
+            <string>Hospital length of stay</string>
+          </entry>
+          <entry name="exact_field_names">
+            <array />
+          </entry>
+          <entry name="extraction_definition">
+            <string>Need hospital admission/discharge dates from another source</string>
+          </entry>
+          <entry name="parameter_type">
+            <string>derived_duration</string>
+          </entry>
+          <entry name="unit">
+            <null />
+          </entry>
+          <entry name="value_range">
+            <null />
+          </entry>
+          <entry name="source_status">
+            <string>unresolved; workbook says not present in q_umcg_aki_marco postoperative ICU dataset</string>
+          </entry>
+          <entry name="workbook_row">
+            <number>38</number>
+          </entry>
+          <entry name="workbook_exact_field_entry">
+            <string>TBD – not present in q_umcg_aki_marco postoperative ICU dataset</string>
+          </entry>
+          <entry name="measurement">
+            <object>
+              <entry name="aggregation">
+                <string>max</string>
+              </entry>
+              <entry name="window_hours">
+                <null />
+              </entry>
+              <entry name="notes">
+                <string>No confirmed source field.</string>
+              </entry>
+            </object>
+          </entry>
+          <entry name="outcome_criteria">
+            <object>
+              <entry name="success">
+                <null />
+              </entry>
+              <entry name="failure">
+                <null />
+              </entry>
+              <entry name="status">
+                <string>pending_clinical_definition</string>
+              </entry>
+            </object>
+          </entry>
+        </parameter>
+        <parameter id="icu_los" measurementOrder="5">
+          <entry name="name">
+            <string>ICU length of stay</string>
+          </entry>
+          <entry name="role">
+            <string>SECONDARY TARGET</string>
+          </entry>
+          <entry name="priority">
+            <string>Core</string>
+          </entry>
+          <entry name="source_fields">
+            <array>
+              <item>
+                <string>q_umcg_aki_marco.adm_ic_admdate</string>
+              </item>
+              <item>
+                <string>q_umcg_aki_marco.adm_ic_disdate</string>
+              </item>
+            </array>
+          </entry>
+          <entry name="notes">
+            <string>Deriving a stay requires temporally matching admission and discharge to the operation; no cut-off is assumed.</string>
+          </entry>
+          <entry name="clinical_parameter">
+            <string>ICU length of stay</string>
+          </entry>
+          <entry name="exact_field_names">
+            <array>
+              <item>
+                <string>q_umcg_aki_marco.adm_ic_admdate</string>
+              </item>
+              <item>
+                <string>q_umcg_aki_marco.adm_ic_disdate</string>
+              </item>
+            </array>
+          </entry>
+          <entry name="extraction_definition">
+            <string>Derive ICU LOS = discharge datetime − admission datetime; match the ICU episode temporally to the cardiac operation</string>
+          </entry>
+          <entry name="parameter_type">
+            <string>derived_duration</string>
+          </entry>
+          <entry name="unit">
+            <null />
+          </entry>
+          <entry name="value_range">
+            <null />
+          </entry>
+          <entry name="source_status">
+            <string>source fields identified; temporal matching/derivation not implemented</string>
+          </entry>
+          <entry name="workbook_row">
+            <number>37</number>
+          </entry>
+          <entry name="workbook_exact_field_entry">
+            <string>q_umcg_aki_marco.adm_ic_admdate; q_umcg_aki_marco.adm_ic_disdate</string>
+          </entry>
+          <entry name="unit_note">
+            <string>Confirm output unit for datetime subtraction before use.</string>
+          </entry>
+          <entry name="measurement">
+            <object>
+              <entry name="source_fields">
+                <array />
+              </entry>
+              <entry name="aggregation">
+                <string>max</string>
+              </entry>
+              <entry name="window_hours">
+                <null />
+              </entry>
+              <entry name="notes">
+                <string>Not calculated until admission/discharge dates can be matched to the operation.</string>
+              </entry>
+            </object>
+          </entry>
+          <entry name="outcome_criteria">
+            <object>
+              <entry name="success">
+                <null />
+              </entry>
+              <entry name="failure">
+                <null />
+              </entry>
+              <entry name="status">
+                <string>pending_clinical_definition</string>
+              </entry>
+            </object>
+          </entry>
+        </parameter>
+        <parameter id="mortality_30d" measurementOrder="7">
+          <entry name="name">
+            <string>30-day mortality</string>
+          </entry>
+          <entry name="role">
+            <string>SECONDARY TARGET</string>
+          </entry>
+          <entry name="priority">
+            <string>Core</string>
+          </entry>
+          <entry name="source_fields">
+            <array>
+              <item>
+                <string>q_umcg_aki_marco.adm_deceased</string>
+              </item>
+            </array>
+          </entry>
+          <entry name="notes">
+            <string>The workbook cautions this may represent ICU/admission mortality, not a verified 30-day endpoint.</string>
+          </entry>
+          <entry name="clinical_parameter">
+            <string>30-day mortality</string>
+          </entry>
+          <entry name="exact_field_names">
+            <array>
+              <item>
+                <string>q_umcg_aki_marco.adm_deceased</string>
+              </item>
+            </array>
+          </entry>
+          <entry name="extraction_definition">
+            <string>Mortality flag is available, but verify whether it represents ICU/admission mortality; a true 30-day endpoint requires date-of-death or explicit 30-day definition</string>
+          </entry>
+          <entry name="parameter_type">
+            <string>boolean</string>
+          </entry>
+          <entry name="unit">
+            <null />
+          </entry>
+          <entry name="value_range">
+            <object>
+              <entry name="min">
+                <number>0</number>
+              </entry>
+              <entry name="max">
+                <number>1</number>
+              </entry>
+            </object>
+          </entry>
+          <entry name="source_status">
+            <string>mapped; verify availability and units in full cohort</string>
+          </entry>
+          <entry name="workbook_row">
+            <number>39</number>
+          </entry>
+          <entry name="workbook_exact_field_entry">
+            <string>q_umcg_aki_marco.adm_deceased</string>
+          </entry>
+          <entry name="measurement">
+            <object>
+              <entry name="aggregation">
+                <string>any_true</string>
+              </entry>
+              <entry name="value_type">
+                <string>boolean</string>
+              </entry>
+              <entry name="window_hours">
+                <null />
+              </entry>
+              <entry name="notes">
+                <string>Mortality horizon is unverified.</string>
+              </entry>
+            </object>
+          </entry>
+          <entry name="outcome_criteria">
+            <object>
+              <entry name="success">
+                <object>
+                  <entry name="operator">
+                    <string>equals</string>
+                  </entry>
+                  <entry name="value">
+                    <number>0</number>
+                  </entry>
+                </object>
+              </entry>
+              <entry name="failure">
+                <object>
+                  <entry name="operator">
+                    <string>equals</string>
+                  </entry>
+                  <entry name="value">
+                    <number>1</number>
+                  </entry>
+                </object>
+              </entry>
+              <entry name="status">
+                <string>provisional</string>
+              </entry>
+            </object>
+          </entry>
+        </parameter>
+        <parameter id="recorded_death_days" measurementOrder="8">
+          <entry name="name">
+            <string>Recorded days to death</string>
+          </entry>
+          <entry name="role">
+            <string>SECONDARY TARGET</string>
+          </entry>
+          <entry name="priority">
+            <string>Core</string>
+          </entry>
+          <entry name="source_fields">
+            <array>
+              <item>
+                <string>epic.DEMOGRAPHICS.days mortality</string>
+              </item>
+            </array>
+          </entry>
+          <entry name="notes">
+            <string>User-confirmed encoding: any nonnegative number (0 included) records death; blank/NA is not evidence of survival. Follow-up horizon unknown; do not call this 30-day mortality.</string>
+          </entry>
+          <entry name="clinical_parameter">
+            <string>Recorded days to death</string>
+          </entry>
+          <entry name="exact_field_names">
+            <array>
+              <item>
+                <string>epic.DEMOGRAPHICS.days mortality</string>
+              </item>
+            </array>
+          </entry>
+          <entry name="extraction_definition">
+            <string>Patient-level demographic outcome evidence, even when recorded on a preoperative row. Finite nonnegative days indicate death; missing, invalid, or negative values are unclassified by this parameter.</string>
+          </entry>
+          <entry name="parameter_type">
+            <string>numeric</string>
+          </entry>
+          <entry name="unit">
+            <null />
+          </entry>
+          <entry name="value_range">
+            <object>
+              <entry name="min">
+                <null />
+              </entry>
+              <entry name="max">
+                <null />
+              </entry>
+            </object>
+          </entry>
+          <entry name="source_status">
+            <string>User-added from CSV header; not in source workbook. Confirm units and follow-up period before research use.</string>
+          </entry>
+          <entry name="workbook_row">
+            <null />
+          </entry>
+          <entry name="workbook_exact_field_entry">
+            <string>Not in source workbook (user-added field)</string>
+          </entry>
+          <entry name="measurement">
+            <object>
+              <entry name="aggregation">
+                <string>max</string>
+              </entry>
+              <entry name="value_type">
+                <string>numeric</string>
+              </entry>
+              <entry name="record_scope">
+                <string>patient</string>
+              </entry>
+              <entry name="window_hours">
+                <null />
+              </entry>
+              <entry name="notes">
+                <string>Patient-level field: any nonnegative number, including 0, records a death; missing values do not establish survival. Follow-up horizon unknown.</string>
+              </entry>
+            </object>
+          </entry>
+          <entry name="outcome_criteria">
+            <object>
+              <entry name="success">
+                <null />
+              </entry>
+              <entry name="failure">
+                <object>
+                  <entry name="operator">
+                    <string>gte</string>
+                  </entry>
+                  <entry name="value">
+                    <number>0</number>
+                  </entry>
+                </object>
+              </entry>
+              <entry name="status">
+                <string>provisional_user_defined</string>
+              </entry>
+            </object>
+          </entry>
+        </parameter>
+        <parameter id="pim" measurementOrder="11">
+          <entry name="name">
+            <string>PIM</string>
+          </entry>
+          <entry name="role">
+            <string>Post-op severity benchmark</string>
+          </entry>
+          <entry name="priority">
+            <string>Extended</string>
+          </entry>
+          <entry name="source_fields">
+            <array>
+              <item>
+                <string>q_umcg_aki_marco.adm_PIM</string>
+              </item>
+            </array>
+          </entry>
+          <entry name="notes">
+            <string>Confirm score timing/definition; do not treat as an end-of-surgery predictor.</string>
+          </entry>
+          <entry name="clinical_parameter">
+            <string>PIM</string>
+          </entry>
+          <entry name="exact_field_names">
+            <array>
+              <item>
+                <string>q_umcg_aki_marco.adm_PIM</string>
+              </item>
+            </array>
+          </entry>
+          <entry name="extraction_definition">
+            <string>Retain for comparison/benchmarking; confirm timing and score definition</string>
+          </entry>
+          <entry name="parameter_type">
+            <string>numeric_score</string>
+          </entry>
+          <entry name="unit">
+            <null />
+          </entry>
+          <entry name="value_range">
+            <null />
+          </entry>
+          <entry name="source_status">
+            <string>mapped; verify availability and units in full cohort</string>
+          </entry>
+          <entry name="workbook_row">
+            <number>42</number>
+          </entry>
+          <entry name="workbook_exact_field_entry">
+            <string>q_umcg_aki_marco.adm_PIM</string>
+          </entry>
+          <entry name="unit_note">
+            <string>Score; no physical unit stated in workbook.</string>
+          </entry>
+          <entry name="measurement">
+            <object>
+              <entry name="aggregation">
+                <string>max</string>
+              </entry>
+              <entry name="window_hours">
+                <null />
+              </entry>
+            </object>
+          </entry>
+          <entry name="outcome_criteria">
+            <object>
+              <entry name="success">
+                <null />
+              </entry>
+              <entry name="failure">
+                <null />
+              </entry>
+              <entry name="status">
+                <string>pending_clinical_definition</string>
+              </entry>
+            </object>
+          </entry>
+        </parameter>
+        <class name="epic.LAB">
+          <parameter id="postop_creatinine_72h" measurementOrder="1">
+            <entry name="name">
+              <string>Creatinine first 72 h</string>
+            </entry>
+            <entry name="role">
+              <string>PRIMARY OUTCOME component</string>
+            </entry>
+            <entry name="priority">
+              <string>Core</string>
+            </entry>
+            <entry name="source_fields">
+              <array>
+                <item>
+                  <string>epic.LAB.Kreatinine (umol/L)</string>
+                </item>
+              </array>
+            </entry>
+            <entry name="notes">
+              <string>Timestamped values in the configured first-72-hour window contribute to a provisional creatinine-based AKI screen; raw postoperative readings are not added to the feature vector.</string>
+            </entry>
+            <entry name="clinical_parameter">
+              <string>Creatinine first 72 h</string>
+            </entry>
+            <entry name="exact_field_names">
+              <array>
+                <item>
+                  <string>epic.LAB.Kreatinine (umol/L)</string>
+                </item>
+              </array>
+            </entry>
+            <entry name="extraction_definition">
+              <string>All values 0–72 h; derive KDIGO creatinine stage vs pre-op baseline</string>
+            </entry>
+            <entry name="parameter_type">
+              <string>time_series_numeric</string>
+            </entry>
+            <entry name="unit">
+              <string>umol/L</string>
+            </entry>
+            <entry name="value_range">
+              <null />
+            </entry>
+            <entry name="source_status">
+              <string>mapped; verify availability and units in full cohort</string>
+            </entry>
+            <entry name="workbook_row">
+              <number>33</number>
+            </entry>
+            <entry name="workbook_exact_field_entry">
+              <string>epic.LAB.Kreatinine (umol/L)</string>
+            </entry>
+            <entry name="measurement">
+              <object>
+                <entry name="aggregation">
+                  <string>max</string>
+                </entry>
+                <entry name="window_hours">
+                  <number>72</number>
+                </entry>
+                <entry name="units">
+                  <string>umol/L</string>
+                </entry>
+              </object>
+            </entry>
+            <entry name="outcome_criteria">
+              <object>
+                <entry name="success">
+                  <null />
+                </entry>
+                <entry name="failure">
+                  <null />
+                </entry>
+                <entry name="status">
+                  <string>pending_clinical_definition</string>
+                </entry>
+              </object>
+            </entry>
+          </parameter>
+        </class>
+        <parameter id="postop_ecmo" measurementOrder="9">
+          <entry name="name">
+            <string>Post-operative ECMO</string>
+          </entry>
+          <entry name="role">
+            <string>SECONDARY TARGET / severe morbidity</string>
+          </entry>
+          <entry name="priority">
+            <string>Extended</string>
+          </entry>
+          <entry name="source_fields">
+            <array />
+          </entry>
+          <entry name="notes">
+            <string>No field was identified in the sample exports described by the workbook.</string>
+          </entry>
+          <entry name="clinical_parameter">
+            <string>Postoperative ECMO</string>
+          </entry>
+          <entry name="exact_field_names">
+            <array />
+          </entry>
+          <entry name="extraction_definition">
+            <string>Yes/no; duration if available</string>
+          </entry>
+          <entry name="parameter_type">
+            <string>boolean</string>
+          </entry>
+          <entry name="unit">
+            <null />
+          </entry>
+          <entry name="value_range">
+            <object>
+              <entry name="min">
+                <number>0</number>
+              </entry>
+              <entry name="max">
+                <number>1</number>
+              </entry>
+            </object>
+          </entry>
+          <entry name="source_status">
+            <string>unresolved; workbook says not identified in 3 sample exports</string>
+          </entry>
+          <entry name="workbook_row">
+            <number>40</number>
+          </entry>
+          <entry name="workbook_exact_field_entry">
+            <string>TBD – not identified in 3 sample exports</string>
+          </entry>
+          <entry name="measurement">
+            <object>
+              <entry name="aggregation">
+                <string>max</string>
+              </entry>
+              <entry name="window_hours">
+                <null />
+              </entry>
+              <entry name="notes">
+                <string>No confirmed source field.</string>
+              </entry>
+            </object>
+          </entry>
+          <entry name="outcome_criteria">
+            <object>
+              <entry name="success">
+                <null />
+              </entry>
+              <entry name="failure">
+                <null />
+              </entry>
+              <entry name="status">
+                <string>pending_clinical_definition</string>
+              </entry>
+            </object>
+          </entry>
+        </parameter>
+        <class name="epic.FLUIDS_OUT">
+          <parameter id="postop_urine_72h" measurementOrder="2">
+            <entry name="name">
+              <string>Urine output first 72 h</string>
+            </entry>
+            <entry name="role">
+              <string>PRIMARY OUTCOME component</string>
+            </entry>
+            <entry name="priority">
+              <string>Core</string>
+            </entry>
+            <entry name="source_fields">
+              <array>
+                <item>
+                  <string>epic.FLUIDS_OUT.Urine (ml)</string>
+                </item>
+              </array>
+            </entry>
+            <entry name="notes">
+              <string>Hourly interval, mL/kg normalization, and weight units need verification before use in outcome criteria.</string>
+            </entry>
+            <entry name="clinical_parameter">
+              <string>Urine output first 72 h</string>
+            </entry>
+            <entry name="exact_field_names">
+              <array>
+                <item>
+                  <string>epic.FLUIDS_OUT.Urine (ml)</string>
+                </item>
+              </array>
+            </entry>
+            <entry name="extraction_definition">
+              <string>Hourly/daily mL/kg/h if timestamps allow; derive KDIGO urine-output criterion</string>
+            </entry>
+            <entry name="parameter_type">
+              <string>time_series_numeric</string>
+            </entry>
+            <entry name="unit">
+              <string>ml</string>
+            </entry>
+            <entry name="value_range">
+              <null />
+            </entry>
+            <entry name="source_status">
+              <string>mapped; verify availability and units in full cohort</string>
+            </entry>
+            <entry name="workbook_row">
+              <number>34</number>
+            </entry>
+            <entry name="workbook_exact_field_entry">
+              <string>epic.FLUIDS_OUT.Urine (ml)</string>
+            </entry>
+            <entry name="measurement">
+              <object>
+                <entry name="aggregation">
+                  <string>max</string>
+                </entry>
+                <entry name="window_hours">
+                  <number>72</number>
+                </entry>
+                <entry name="units">
+                  <string>ml</string>
+                </entry>
+                <entry name="notes">
+                  <string>Maximum recorded value only; interval and weight normalization are not inferred.</string>
+                </entry>
+              </object>
+            </entry>
+            <entry name="outcome_criteria">
+              <object>
+                <entry name="success">
+                  <null />
+                </entry>
+                <entry name="failure">
+                  <null />
+                </entry>
+                <entry name="status">
+                  <string>pending_clinical_definition</string>
+                </entry>
+              </object>
+            </entry>
+          </parameter>
+        </class>
+        <parameter id="prism_ii" measurementOrder="10">
+          <entry name="name">
+            <string>PRISM II</string>
+          </entry>
+          <entry name="role">
+            <string>Post-op severity benchmark</string>
+          </entry>
+          <entry name="priority">
+            <string>Extended</string>
+          </entry>
+          <entry name="source_fields">
+            <array>
+              <item>
+                <string>q_umcg_aki_marco.adm_PRISMII</string>
+              </item>
+            </array>
+          </entry>
+          <entry name="notes">
+            <string>Retain for benchmarking; do not treat as an end-of-surgery predictor.</string>
+          </entry>
+          <entry name="clinical_parameter">
+            <string>PRISM II</string>
+          </entry>
+          <entry name="exact_field_names">
+            <array>
+              <item>
+                <string>q_umcg_aki_marco.adm_PRISMII</string>
+              </item>
+            </array>
+          </entry>
+          <entry name="extraction_definition">
+            <string>Retain for comparison/benchmarking; do not include in a model intended to predict outcome using data available by end of surgery</string>
+          </entry>
+          <entry name="parameter_type">
+            <string>numeric_score</string>
+          </entry>
+          <entry name="unit">
+            <null />
+          </entry>
+          <entry name="value_range">
+            <null />
+          </entry>
+          <entry name="source_status">
+            <string>mapped; verify availability and units in full cohort</string>
+          </entry>
+          <entry name="workbook_row">
+            <number>41</number>
+          </entry>
+          <entry name="workbook_exact_field_entry">
+            <string>q_umcg_aki_marco.adm_PRISMII</string>
+          </entry>
+          <entry name="unit_note">
+            <string>Score; no physical unit stated in workbook.</string>
+          </entry>
+          <entry name="measurement">
+            <object>
+              <entry name="aggregation">
+                <string>max</string>
+              </entry>
+              <entry name="window_hours">
+                <null />
+              </entry>
+            </object>
+          </entry>
+          <entry name="outcome_criteria">
+            <object>
+              <entry name="success">
+                <null />
+              </entry>
+              <entry name="failure">
+                <null />
+              </entry>
+              <entry name="status">
+                <string>pending_clinical_definition</string>
+              </entry>
+            </object>
+          </entry>
+        </parameter>
+        <parameter id="ventilation_duration" measurementOrder="4">
+          <entry name="name">
+            <string>Mechanical ventilation duration</string>
+          </entry>
+          <entry name="role">
+            <string>SECONDARY TARGET</string>
+          </entry>
+          <entry name="priority">
+            <string>Core</string>
+          </entry>
+          <entry name="source_fields">
+            <array>
+              <item>
+                <string>q_umcg_aki_marco.adm_ventilationdays</string>
+              </item>
+            </array>
+          </entry>
+          <entry name="notes">
+            <string>Duration is retained as recorded. No success/failure cut-off is assumed.</string>
+          </entry>
+          <entry name="clinical_parameter">
+            <string>Mechanical ventilation duration</string>
+          </entry>
+          <entry name="exact_field_names">
+            <array>
+              <item>
+                <string>q_umcg_aki_marco.adm_ventilationdays</string>
+              </item>
+            </array>
+          </entry>
+          <entry name="extraction_definition">
+            <string>Ventilation duration in days as recorded; confirm definition</string>
+          </entry>
+          <entry name="parameter_type">
+            <string>numeric</string>
+          </entry>
+          <entry name="unit">
+            <string>days</string>
+          </entry>
+          <entry name="value_range">
+            <null />
+          </entry>
+          <entry name="source_status">
+            <string>mapped; verify availability and units in full cohort</string>
+          </entry>
+          <entry name="workbook_row">
+            <number>36</number>
+          </entry>
+          <entry name="workbook_exact_field_entry">
+            <string>q_umcg_aki_marco.adm_ventilationdays</string>
+          </entry>
+          <entry name="measurement">
+            <object>
+              <entry name="aggregation">
+                <string>max</string>
+              </entry>
+              <entry name="window_hours">
+                <null />
+              </entry>
+              <entry name="units">
+                <string>days</string>
+              </entry>
+            </object>
+          </entry>
+          <entry name="outcome_criteria">
+            <object>
+              <entry name="success">
+                <null />
+              </entry>
+              <entry name="failure">
+                <null />
+              </entry>
+              <entry name="status">
+                <string>pending_clinical_definition</string>
+              </entry>
+            </object>
+          </entry>
+        </parameter>
+      </post>
+    </relevantParameters>
+    <parameterSelection>
+      <run>false</run>
+      <phases>
+        <phase>Pre-operative</phase>
+        <phase>During-operative</phase>
+        <phase>Post-operative</phase>
+      </phases>
+      <includeIds />
+      <excludeIds />
+    </parameterSelection>
+    <parameterDescriptions>
+      <run>true</run>
+      <output>results/parameter_reference.md</output>
+    </parameterDescriptions>
+    <csvHeaderDescriptions>
+      <run>true</run>
+      <inventoryOutput>results/csv_headers.csv</inventoryOutput>
+      <summaryOutput>results/csv_header_summary.md</summaryOutput>
+    </csvHeaderDescriptions>
+    <plotting>
+      <run>true</run>
+      <distributions>true</distributions>
+      <phase>all</phase>
+      <bins>20</bins>
+    </plotting>
+  </preprocessing>
+  <model>
+    <activeModel>perceptron</activeModel>
+    <perceptron>
+      <run>false</run>
+      <mode>train-validation</mode>
+      <trainingValidation>
+        <vectors>results/patient_vectors.csv</vectors>
+        <outcomes>results/patient_outcomes.csv</outcomes>
+        <trainingSet>results/training_set.csv</trainingSet>
+        <validationSet>results/validation_set.csv</validationSet>
+        <modelOutput>results/perceptron_model.json</modelOutput>
+        <trainFraction>0.6</trainFraction>
+        <epochs>100</epochs>
+        <seed>300</seed>
+        <omit>
+          <id>operation_diagnosis_proxy</id>
+        </omit>
+      </trainingValidation>
+      <novelData>
+        <vectors>results/patient_vectors.csv</vectors>
+        <modelInput>results/perceptron_model.json</modelInput>
+        <predictions>results/novel_predictions.csv</predictions>
+      </novelData>
+      <plotting>
+        <run>true</run>
+        <output>results/perceptron_confusion_matrix.png</output>
+      </plotting>
+    </perceptron>
+  </model>
+</pipelineConfiguration>

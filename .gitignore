@@ -7,4 +7,7 @@ venv/
 htmlcov/
 logs/
 results/
+.vs/
+data/patients/*
+!data/patients/README.md
 .DS_Store

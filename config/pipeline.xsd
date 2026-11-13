@@ -1,0 +1,621 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:simpleType name="ModelName">
+    <xs:annotation>
+      <xs:documentation>Name of the algorithm configuration selected by model/activeModel.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="perceptron" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="RunMode">
+    <xs:annotation>
+      <xs:documentation>Execution mode supported by the perceptron component.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="train-validation" />
+      <xs:enumeration value="novel-data" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="PhaseName">
+    <xs:annotation>
+      <xs:documentation>Data phase represented by a parameter record.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Pre-operative" />
+      <xs:enumeration value="During-operative" />
+      <xs:enumeration value="Post-operative" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="LogLevel">
+    <xs:annotation>
+      <xs:documentation>Minimum severity written by the general logger.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="DEBUG" />
+      <xs:enumeration value="INFO" />
+      <xs:enumeration value="WARNING" />
+      <xs:enumeration value="ERROR" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="PlotPhase">
+    <xs:annotation>
+      <xs:documentation>Phase filter used when generating parameter distribution plots.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="all" />
+      <xs:enumeration value="preoperative" />
+      <xs:enumeration value="postoperative" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="pipelineConfiguration">
+    <xs:annotation>
+      <xs:documentation>Root run configuration. Child order defines the pipeline: logging settings, preprocessing, then model.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="logging" type="LoggingType">
+          <xs:annotation>
+            <xs:documentation>The logger configuration is stored directly under pipelineConfiguration.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="preprocessing" type="PreprocessingType">
+          <xs:annotation>
+            <xs:documentation>Preprocessing stage. It executes before the model stage when enabled.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="model" type="ModelType">
+          <xs:annotation>
+            <xs:documentation>Model stage. It executes after preprocessing when enabled.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="version" use="required" fixed="1">
+        <xs:annotation>
+          <xs:documentation>Pipeline configuration format version. Version 1 is currently supported.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:anyAttribute namespace="http://www.w3.org/2001/XMLSchema-instance" processContents="lax" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="parameterMap" type="ParameterMapType">
+    <xs:annotation>
+      <xs:documentation>Root of a standalone typed parameter catalog; the same schema also validates phase-owned definitions in the pipeline.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="LoggingType">
+    <xs:annotation>
+      <xs:documentation>Logger destination and minimum severity.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="directory" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Log directory, relative to the project root unless absolute.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="level" type="LogLevel">
+        <xs:annotation>
+          <xs:documentation>Minimum severity: DEBUG, INFO, WARNING, or ERROR.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PreprocessingType">
+    <xs:annotation>
+      <xs:documentation>Ordered preprocessing stage: inputs, outputs, catalog, selection, parameter descriptions, CSV header descriptions, and plots.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="run" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Whether preprocessing reads source CSVs and creates patient-level outputs.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="inputs" type="PathListType">
+        <xs:annotation>
+          <xs:documentation>Ordered list of CSV files or folders scanned by preprocessing.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="outputDirectory" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Preprocessing output directory, relative to the project root unless absolute.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="relevantParameters" type="EmbeddedParameterMapType">
+        <xs:annotation>
+          <xs:documentation>Shared typed settings followed by pre, during, and post phase-owned definitions.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="parameterSelection" type="ParameterSelectionType">
+        <xs:annotation>
+          <xs:documentation>Optional phase/include/exclude filter for catalog entries.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="parameterDescriptions" type="DescriptionsType">
+        <xs:annotation>
+          <xs:documentation>Settings for writing the parameter reference document.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="csvHeaderDescriptions" type="CsvHeaderDescriptionsType">
+        <xs:annotation>
+          <xs:documentation>Independent header-only inventory and filename-family summary for the configured CSV inputs.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="plotting" type="PreprocessingPlotType">
+        <xs:annotation>
+          <xs:documentation>Settings for preprocessing heatmaps and distributions.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PathListType">
+    <xs:annotation>
+      <xs:documentation>One or more CSV files or folders used as preprocessing inputs.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="path" type="xs:string" minOccurs="1" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>One CSV file or folder to include in the preprocessing input list.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ParameterSelectionType">
+    <xs:annotation>
+      <xs:documentation>Optional filter applied to parameters defined in the pre, during, and post sections before preprocessing.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="run" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Whether the parameter filters below are applied.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="phases" type="PhaseListType">
+        <xs:annotation>
+          <xs:documentation>Parameter phases retained when selection is enabled.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="includeIds" type="IdListType">
+        <xs:annotation>
+          <xs:documentation>Optional allow-list; empty means all IDs in selected phases.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="excludeIds" type="IdListType">
+        <xs:annotation>
+          <xs:documentation>Parameter IDs removed from the selected set.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PhaseListType">
+    <xs:annotation>
+      <xs:documentation>List of parameter phases to retain.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="phase" type="PhaseName" minOccurs="1" maxOccurs="3">
+        <xs:annotation>
+          <xs:documentation>Parameter phase: Pre-operative, During-operative, or Post-operative.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="IdListType">
+    <xs:annotation>
+      <xs:documentation>Zero or more parameter IDs, used for include, exclude, and model omission lists.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="id" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Stable parameter ID used by the surrounding list setting.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="DescriptionsType">
+    <xs:annotation>
+      <xs:documentation>Controls generation of the human-readable parameter reference.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="run" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Whether the parameter reference document is generated.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="output" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Destination Markdown file for the parameter reference.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CsvHeaderDescriptionsType">
+    <xs:annotation>
+      <xs:documentation>Independent header-only CSV inspection, including per-file headers, numbered filename parts, and aggregate counts.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="run" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Whether to inspect CSV headers. This can run even when patient preprocessing is disabled.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="inventoryOutput" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>CSV output with source index, relative CSV filename, filename family, numeric part, column position, and exact header.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="summaryOutput" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Markdown summary of files, numbered filename families, schema groups, and header presence counts.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PreprocessingPlotType">
+    <xs:annotation>
+      <xs:documentation>Controls preprocessing heatmaps and parameter-distribution plots.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="run" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Whether preprocessing plots are generated.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="distributions" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Whether distributions are generated in addition to heatmaps.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="phase" type="PlotPhase">
+        <xs:annotation>
+          <xs:documentation>Distribution phase filter: all, preoperative, or postoperative.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="bins" type="xs:positiveInteger">
+        <xs:annotation>
+          <xs:documentation>Positive number of histogram bins for numeric distributions.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ModelType">
+    <xs:annotation>
+      <xs:documentation>Model stage. activeModel names the model section whose settings are used.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="activeModel" type="ModelName">
+        <xs:annotation>
+          <xs:documentation>Name of the model subsection to execute.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="perceptron" type="PerceptronType">
+        <xs:annotation>
+          <xs:documentation>Perceptron-specific settings; additional model sections are declared here and in the schema sequence.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PerceptronType">
+    <xs:annotation>
+      <xs:documentation>Perceptron run switch, mode, training/validation settings, novel-data settings, and plots.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="run" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Whether the perceptron executes when it is the active model.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="mode" type="RunMode">
+        <xs:annotation>
+          <xs:documentation>Selects train-validation or novel-data prediction.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="trainingValidation" type="TrainingValidationType">
+        <xs:annotation>
+          <xs:documentation>Settings for labeled training and held-out validation.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="novelData" type="NovelDataType">
+        <xs:annotation>
+          <xs:documentation>Settings for prediction using feature-only data and a saved model.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="plotting" type="ModelPlotType">
+        <xs:annotation>
+          <xs:documentation>Optional validation confusion-matrix plot settings.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="TrainingValidationType">
+    <xs:annotation>
+      <xs:documentation>Inputs, outputs, split settings, training limits, seed, and excluded feature IDs.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="vectors" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Feature-only patient vectors used when preprocessing is disabled.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="outcomes" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Patient-keyed outcome CSV used when preprocessing is disabled.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="trainingSet" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Destination CSV for labeled training rows.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="validationSet" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Destination CSV for validation features and predictions, without true targets.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="modelOutput" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Destination JSON file for trained weights and aggregate metrics.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="trainFraction" type="xs:decimal">
+        <xs:annotation>
+          <xs:documentation>Fraction of eligible rows assigned to training; the rest is validation.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="epochs" type="xs:positiveInteger">
+        <xs:annotation>
+          <xs:documentation>Maximum number of perceptron training passes.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="seed" type="xs:integer">
+        <xs:annotation>
+          <xs:documentation>Seed controlling the repeatable train/validation split.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="omit" type="IdListType">
+        <xs:annotation>
+          <xs:documentation>Feature IDs to omit from training. Configure exclusions here, not in trainer code.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="NovelDataType">
+    <xs:annotation>
+      <xs:documentation>Previously trained model and feature-only input/output paths for prediction.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="vectors" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Feature-only patient vectors used when preprocessing is disabled.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="modelInput" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Previously trained model JSON used for prediction.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="predictions" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Destination CSV for patient IDs and predictions.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ModelPlotType">
+    <xs:annotation>
+      <xs:documentation>Controls the aggregate validation confusion-matrix plot.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="run" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Whether the validation confusion-matrix image is generated.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="output" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Destination image path for the validation confusion matrix.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="EmbeddedParameterMapType">
+    <xs:annotation><xs:documentation>Shared settings and parameter definitions stored once in pre, during, or post.</xs:documentation></xs:annotation>
+    <xs:sequence>
+      <xs:element name="settings" type="ParameterObjectType">
+        <xs:annotation><xs:documentation>Shared typed settings; parameter definitions belong in phase sections.</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="pre" type="RelevantPhaseType">
+        <xs:annotation><xs:documentation>Pre-operative parameter definitions and Epic-class groups.</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="during" type="RelevantPhaseType">
+        <xs:annotation><xs:documentation>During-operative definitions for reporting; extraction needs an operation end.</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="post" type="PostRelevantPhaseType">
+        <xs:annotation><xs:documentation>Post-operative definitions with individual measurements, outcomes and optional class failure.</xs:documentation></xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="formatVersion" use="required" fixed="1">
+      <xs:annotation><xs:documentation>Typed catalog format version.</xs:documentation></xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="RelevantPhaseType">
+    <xs:annotation><xs:documentation>Definitions for a phase; class groups contain only explicitly defined matching fields.</xs:documentation></xs:annotation>
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="parameter" type="DefinedParameterType">
+        <xs:annotation><xs:documentation>One parameter with typed metadata and source fields.</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="class" type="DefinedClassType">
+        <xs:annotation><xs:documentation>Group of parameter definitions belonging to this Epic class.</xs:documentation></xs:annotation>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+  <xs:complexType name="PostRelevantPhaseType">
+    <xs:annotation><xs:documentation>Post-operative definitions, measurements, and outcome criteria.</xs:documentation></xs:annotation>
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="parameter" type="DefinedParameterType">
+        <xs:annotation><xs:documentation>Post-operative parameter with optional measurement and outcome_criteria typed entries.</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="class" type="PostDefinedClassType">
+        <xs:annotation><xs:documentation>Post-operative definitions with optional shared nonempty failure.</xs:documentation></xs:annotation>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+  <xs:complexType name="DefinedParameterType">
+    <xs:annotation><xs:documentation>One definition; ID and phase occur only in the XML structure.</xs:documentation></xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="ParameterObjectType">
+        <xs:attribute name="id" type="xs:string" use="required">
+          <xs:annotation><xs:documentation>Unique parameter ID.</xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="measurementOrder" type="xs:positiveInteger">
+          <xs:annotation><xs:documentation>Preserves existing exported post-operative measurement column order.</xs:documentation></xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="DefinedClassType">
+    <xs:annotation><xs:documentation>Epic class grouping of already defined fields; unrelated CSV headers are not selected.</xs:documentation></xs:annotation>
+    <xs:sequence>
+      <xs:element name="parameter" type="DefinedParameterType" minOccurs="1" maxOccurs="unbounded">
+        <xs:annotation><xs:documentation>Parameter defined once inside this Epic class and phase.</xs:documentation></xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation><xs:documentation>Exact Epic class, such as epic.LAB.</xs:documentation></xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="PostDefinedClassType">
+    <xs:annotation><xs:documentation>Post-operative Epic class, optionally making a nonmissing value failure.</xs:documentation></xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="DefinedClassType">
+        <xs:attribute name="failure" use="optional" fixed="nonempty">
+          <xs:annotation><xs:documentation>Nonblank, nonmissing matching class value including zero is failure.</xs:documentation></xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ParameterMapType">
+    <xs:annotation>
+      <xs:documentation>Standalone typed parameter-map root. Embedded relevantParameters instead has shared settings and pre/during/post definitions. In post measurement entries, record_scope=patient reads patient-level metadata from any row; the default uses postoperative timestamps. Patient scope cannot use window_hours; runtime checks this.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="object" type="ParameterObjectType">
+        <xs:annotation>
+          <xs:documentation>Top-level object containing catalog fields.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="formatVersion" use="required" fixed="1">
+      <xs:annotation>
+        <xs:documentation>Typed parameter-map format version. Version 1 is currently supported.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="ParameterObjectType">
+    <xs:annotation>
+      <xs:documentation>Named fields in the typed parameter catalog.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="entry" type="ParameterEntryType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Named object field containing exactly one typed value.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ParameterEntryType">
+    <xs:annotation>
+      <xs:documentation>One named catalog field and its single typed value.</xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:element name="object" type="ParameterObjectType">
+        <xs:annotation>
+          <xs:documentation>Nested object value.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="array" type="ParameterArrayType">
+        <xs:annotation>
+          <xs:documentation>Ordered array value.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="string" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Text value.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="number" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>Finite numeric value.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="boolean" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Boolean value, true or false.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="null" type="ParameterNullType">
+        <xs:annotation>
+          <xs:documentation>Explicitly unknown or unavailable value.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:choice>
+    <xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation>Unique field name within the containing object.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="ParameterArrayType">
+    <xs:annotation>
+      <xs:documentation>Ordered collection of typed item values.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="item" type="ParameterItemType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>One array item containing exactly one typed value.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ParameterItemType">
+    <xs:annotation>
+      <xs:documentation>One typed value inside an array.</xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:element name="object" type="ParameterObjectType">
+        <xs:annotation>
+          <xs:documentation>Nested object value inside an array item.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="array" type="ParameterArrayType">
+        <xs:annotation>
+          <xs:documentation>Nested array value.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="string" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Text value inside an array item.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="number" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>Finite numeric value inside an array item.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="boolean" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Boolean value inside an array item.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="null" type="ParameterNullType">
+        <xs:annotation>
+          <xs:documentation>Explicitly unknown or unavailable array value.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+  <xs:complexType name="ParameterNullType">
+    <xs:annotation>
+      <xs:documentation>Empty value representing an intentionally unknown or unavailable catalog value.</xs:documentation>
+    </xs:annotation>
+  </xs:complexType>
+</xs:schema>
